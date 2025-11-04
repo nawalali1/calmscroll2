@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -12,7 +11,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Check auth only once on mount
   useEffect(() => {
     setIsClient(true);
     const checkAuth = async () => {
@@ -21,11 +19,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { user } } = await supabase.auth.getUser();
         setUser(user);
 
-        // Only redirect if we have a definitive user state
         if (!user && pathname !== '/login' && !pathname.startsWith('/auth')) {
-          router.push('/login');
+          router.replace('/login');
         } else if (user && pathname === '/login') {
-          router.push('/');
+          router.replace('/');
         }
       } catch (error) {
         console.error('Auth check error:', error);
@@ -35,15 +32,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     checkAuth();
-  }, []); // Empty dependency array - run only once on mount
+
+    // Also listen for auth state changes
+    const supabase = createClient();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => subscription?.unsubscribe();
+  }, [pathname, router]);
 
   if (!isClient || isChecking) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <Loader size={32} className="text-calm-blue-500 animate-spin" />
-      </div>
-    );
+    return <div className="flex-1 flex items-center justify-center"><Loader size={32} className="animate-spin" /></div>;
   }
-
   return <>{children}</>;
 }

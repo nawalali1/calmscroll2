@@ -15,7 +15,8 @@ interface UseNotesOpts {
   userId?: string;
 }
 
-export const useNotes = ({ userId }: UseNotesOpts) => {
+export const useNotes = (opts?: UseNotesOpts) => {
+  const userId = opts?.userId;
   const [notes, setNotes] = useState<Note[]>([]);
   const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(false);
