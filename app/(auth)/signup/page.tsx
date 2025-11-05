@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import AuthForm from '@/components/AuthForm';
 
-export default function LoginPage() {
+export default function SignUpPage() {
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-[#eaf2ff] via-[#eef2f7] to-[#fdfefe] flex items-center justify-center px-4 py-12 overflow-hidden">
 
@@ -36,7 +36,7 @@ export default function LoginPage() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className="w-full flex justify-center relative z-10"
       >
-        <AuthForm mode="login" />
+        <AuthForm mode="signup" />
       </motion.div>
     </div>
   );
