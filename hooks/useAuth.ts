@@ -15,15 +15,24 @@ export const useAuth = () => {
     const getUser = async () => {
       try {
         const {
-          data: { user },
-          error: authError,
-        } = await supabase.auth.getUser();
+          data: { session },
+        } = await supabase.auth.getSession();
 
-        if (authError) {
-          console.error('Auth error:', authError);
-          setUser(null);
+        if (session?.user) {
+          setUser(session.user);
         } else {
-          setUser(user || null);
+          // Try getUser as fallback
+          const {
+            data: { user: fallbackUser },
+            error: authError,
+          } = await supabase.auth.getUser();
+
+          if (authError) {
+            console.error('Auth error:', authError);
+            setUser(null);
+          } else {
+            setUser(fallbackUser || null);
+          }
         }
       } catch (err) {
         console.error('Get user error:', err);
@@ -39,6 +48,7 @@ export const useAuth = () => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
+      setLoading(false);
     });
 
     return () => subscription?.unsubscribe();
@@ -51,15 +61,36 @@ export const useAuth = () => {
     if (data.user) {
       setUser(data.user);
     }
+    return data;
   };
 
   const signup = async (email: string, password: string) => {
     const supabase = createClient();
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ 
+      email, 
+      password,
+      options: {
+        emailRedirectTo: `${typeof window !== 'undefined' ? window.location.origin : ''}/auth/callback`
+      }
+    });
     if (error) throw error;
+    
+    // Set user immediately from signup response
     if (data.user) {
       setUser(data.user);
+      
+      // Create profile for new user
+      try {
+        await supabase.from('profiles').insert({ 
+          id: data.user.id, 
+          onboarding_complete: false 
+        });
+      } catch (profileError) {
+        console.log('Profile may already exist or will be created by callback');
+      }
     }
+    
+    return data;
   };
 
   const logout = async () => {

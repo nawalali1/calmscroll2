@@ -40,15 +40,21 @@ export default function AuthForm({ mode }: AuthFormProps) {
     try {
       if (mode === 'login') {
         await login(email, password);
-        router.push('/');
+        // Wait for session to be established
+        await new Promise(resolve => setTimeout(resolve, 500));
+        window.location.href = '/';
       } else {
-        await signup(email, password);
-        router.push('/login');
+        const { user } = await signup(email, password);
+        if (user) {
+          // Wait for session to be established
+          await new Promise(resolve => setTimeout(resolve, 500));
+          // Redirect new users to onboarding
+          window.location.href = '/onboarding';
+        }
       }
     } catch (err: any) {
       const errorMsg = err?.message || 'Authentication failed';
       setError(errorMsg);
-    } finally {
       setIsLoading(false);
     }
   };
