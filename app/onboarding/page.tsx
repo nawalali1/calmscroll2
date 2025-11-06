@@ -2,78 +2,57 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import { saveInterests, updateProfile } from '@/lib/db';
-import { Loader } from 'lucide-react';
-
-const INTERESTS = [
-  'Exercise', 'Reading', 'Prayer', 'Meditation', 'Journaling',
-  'Music', 'Art', 'Cooking', 'Nature', 'Learning'
-];
+import { createClient } from '@/lib/supabase/client';
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
-  const [selected, setSelected] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const supabase = createClient();
+  const [displayName, setDisplayName] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string|null>(null);
 
-  // Redirect to login if auth check is complete and user is not logged in
-  if (!authLoading && !user) {
-    router.replace('/login');
-    return null;
-  }
-
-  const toggleInterest = (interest: string) => {
-    setSelected(prev =>
-      prev.includes(interest)
-        ? prev.filter(i => i !== interest)
-        : [...prev, interest]
-    );
-  };
-
-  const handleComplete = async () => {
-    if (!user || selected.length === 0) return;
-    setLoading(true);
+  const finish = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null); setSaving(true);
     try {
-      await saveInterests(user.id, selected);
-      await updateProfile(user.id, { onboarding_complete: true });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.replace('/login?notice=confirm_email');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .upsert(
+          { id: user.id, display_name: displayName || null, onboarding_complete: true },
+          { onConflict: 'id' }
+        );
+      if (error) throw error;
+
       router.replace('/home');
-    } catch (error) {
-      console.error('Failed to complete onboarding:', error);
-      alert('Failed to save. Please try again.');
+    } catch (e:any) {
+      setError(e?.message || 'Failed to save');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
   return (
-    <div className="flex-1 flex flex-col p-6 space-y-6">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-slate-900">Welcome to CalmScroll</h1>
-        <p className="text-slate-600">What activities help you stay mindful?</p>
-      </div>
-      <div className="flex-1 grid grid-cols-2 gap-3">
-        {INTERESTS.map(interest => (
-          <button
-            key={interest}
-            onClick={() => toggleInterest(interest)}
-            className={`p-4 rounded-lg border-2 transition-all ${
-              selected.includes(interest)
-                ? 'border-calm-blue-500 bg-calm-blue-50 text-calm-blue-700'
-                : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
-            }`}
-          >
-            {interest}
-          </button>
-        ))}
-      </div>
-      <button
-        onClick={handleComplete}
-        disabled={selected.length === 0 || loading}
-        className="w-full bg-calm-blue-500 hover:bg-calm-blue-600 text-white py-4 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {loading ? <Loader size={20} className="animate-spin mx-auto" /> : 'Continue'}
-      </button>
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
+      <form onSubmit={finish} style={{width:360,border:'1px solid #e2e8f0',borderRadius:12,padding:16,background:'#fff'}}>
+        <h1 style={{textAlign:'center',marginBottom:12}}>Let’s get you set up</h1>
+        {error && <p style={{color:'#b91c1c',fontSize:14}}>{error}</p>}
+        <label style={{display:'block',fontSize:12,margin:'6px 0'}}>Display name (optional)</label>
+        <input
+          value={displayName}
+          onChange={(e)=>setDisplayName(e.target.value)}
+          placeholder="e.g. Nawal"
+          style={{width:'100%',padding:'10px',border:'1px solid #e2e8f0',borderRadius:8}}
+        />
+        <button type="submit" disabled={saving} style={{marginTop:10,width:'100%',padding:'10px',borderRadius:8,background:'#6366F1',color:'#fff'}}>
+          {saving ? 'Saving…' : 'Finish onboarding'}
+        </button>
+      </form>
     </div>
   );
 }

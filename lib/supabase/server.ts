@@ -10,9 +10,9 @@ export const createClient = async () => {
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll().map((cookie) => ({
-            name: cookie.name,
-            value: cookie.value,
+          return cookieStore.getAll().map((c) => ({
+            name: c.name,
+            value: c.value,
           }));
         },
         setAll(cookiesToSet) {
@@ -20,8 +20,8 @@ export const createClient = async () => {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             );
-          } catch (error) {
-            // Handle cookie setting errors in middleware
+          } catch {
+            // ignore middleware errors
           }
         },
       },
