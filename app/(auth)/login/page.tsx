@@ -67,8 +67,8 @@ export default function LoginPage() {
         </form>
 
         <div style={{display:'flex',gap:8,marginTop:10}}>
-          <button onClick={handleGoogle} disabled={isLoading} style={{flex:1,padding:'8px',border:'1px solid #e2e8f0',borderRadius:8}}>Google</button>
-          <button onClick={handleOutlook} disabled={isLoading} style={{flex:1,padding:'8px',border:'1px solid #e2e8f0',borderRadius:8}}>Outlook</button>
+          <button type="button" onClick={handleGoogle} disabled={isLoading} style={{flex:1,padding:'8px',border:'1px solid #e2e8f0',borderRadius:8}}>Google</button>
+          <button type="button" onClick={handleOutlook} disabled={isLoading} style={{flex:1,padding:'8px',border:'1px solid #e2e8f0',borderRadius:8}}>Outlook</button>
         </div>
 
         <p style={{textAlign:'center',fontSize:12,marginTop:10}}>

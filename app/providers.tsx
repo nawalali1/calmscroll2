@@ -19,7 +19,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { user } } = await supabase.auth.getUser();
         setUser(user);
 
-        if (!user && pathname !== '/login' && !pathname.startsWith('/auth')) {
+        const publicPaths = ['/login', '/signup', '/callback'];
+        if (!user && !publicPaths.some(p => pathname.startsWith(p))) {
           router.replace('/login');
         } else if (user && pathname === '/login') {
           router.replace('/');
