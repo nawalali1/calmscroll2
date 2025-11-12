@@ -17,6 +17,8 @@ import {
   Leaf,
   Sparkles
 } from 'lucide-react';
+import { useBreather } from '@/hooks/useBreather';
+import BreatherSheet from '@/components/BreatherSheet';
 
 interface Profile {
   display_name?: string;
@@ -65,6 +67,9 @@ export default function HomePage() {
   const [noteContent, setNoteContent] = useState('');
   const [savingNote, setSavingNote] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Breather state
+  const breather = useBreather(user?.id);
 
   useEffect(() => {
     const loadData = async () => {
@@ -216,64 +221,58 @@ export default function HomePage() {
         
         {/* Header */}
         <header style={{
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '12px'
+          marginBottom: '20px'
         }}>
-          <div style={{ flex: 1 }}>
-            <h1 style={{ 
-              fontSize: '28px', 
-              fontWeight: '700', 
-              color: '#0f172a', 
-              margin: '0 0 4px 0',
-              letterSpacing: '-0.02em'
-            }}>
-              Welcome Back
-            </h1>
-            <p style={{ 
-              fontSize: '14px', 
-              color: '#64748b', 
-              margin: 0,
-              fontWeight: '400'
-            }}>
-              Hi, {displayName}
-            </p>
-          </div>
-          <button 
-            onClick={openAddNote}
-            style={{
-              background: '#16a34a',
-              border: 'none',
-              borderRadius: '16px',
-              width: '48px',
-              height: '48px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              color: '#ffffff',
-              boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)',
-              transition: 'all 0.2s'
-            }}
-            title="Add note"
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            <Plus size={24} strokeWidth={2.5} />
-          </button>
+          <h1 style={{ 
+            fontSize: '28px', 
+            fontWeight: '700', 
+            color: '#0f172a', 
+            margin: '0 0 4px 0',
+            letterSpacing: '-0.02em'
+          }}>
+            Welcome Back
+          </h1>
+          <p style={{ 
+            fontSize: '14px', 
+            color: '#64748b', 
+            margin: 0,
+            fontWeight: '400'
+          }}>
+            Hi, {displayName}
+          </p>
         </header>
 
         {/* Mindful Minutes Feature Card */}
-        <div style={{
+        <div 
+          onClick={() => {
+            console.log('🔴 CLICKED!');
+            console.log('breather:', breather);
+            console.log('breather.isOpen:', breather.isOpen);
+            console.log('Calling setIsOpen(true)...');
+            breather.setIsOpen(true);
+            console.log('Calling start()...');
+            breather.start();
+            console.log('Done!');
+          }}
+          style={{
           background: 'linear-gradient(135deg, #bbf7d0 0%, #86efac 100%)',
           border: '1px solid #86efac',
           borderRadius: '24px',
           padding: '24px',
           marginBottom: '20px',
-          boxShadow: '0 8px 24px rgba(34, 197, 94, 0.15)'
-        }}>
+          boxShadow: '0 8px 24px rgba(34, 197, 94, 0.15)',
+          cursor: 'pointer',
+          transition: 'all 0.2s'
+        }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 12px 32px rgba(34, 197, 94, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 8px 24px rgba(34, 197, 94, 0.15)';
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ flex: 1 }}>
               <p style={{ 
@@ -284,7 +283,7 @@ export default function HomePage() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
               }}>
-                Mindful Minutes
+                Minute breather to stop doom scrolling
               </p>
               <h3 style={{ 
                 fontSize: '36px', 
@@ -301,7 +300,7 @@ export default function HomePage() {
                 margin: 0,
                 fontWeight: '500'
               }}>
-                Take a moment to breathe
+                Tap to breathe
               </p>
             </div>
             <div style={{
@@ -313,7 +312,7 @@ export default function HomePage() {
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <Sparkles size={32} style={{ color: '#15803d' }} strokeWidth={2} />
+              <Wind size={32} style={{ color: '#15803d' }} strokeWidth={2} />
             </div>
           </div>
         </div>
@@ -883,6 +882,20 @@ export default function HomePage() {
           </div>
         </>
       )}
+
+      {/* Breather Sheet */}
+      <BreatherSheet
+        isOpen={breather.isOpen}
+        onClose={breather.cancel}
+        seconds={breather.seconds}
+        progress={breather.progress}
+        isRunning={breather.isRunning}
+        onStart={breather.start}
+        onPause={breather.pause}
+        onResume={breather.resume}
+        onCancel={breather.cancel}
+        onComplete={breather.complete}
+      />
     </div>
   );
 }

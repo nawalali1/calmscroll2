@@ -24,6 +24,7 @@ export default function SettingsPage() {
   const [email, setEmail] = useState<string>('');
   const [displayName, setDisplayName] = useState<string>('');
   const [interests, setInterests] = useState<string[]>([]);
+  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   const [prefs, setPrefs] = useState<ReminderPrefs>({
     dailyReminder: true,
@@ -62,7 +63,7 @@ export default function SettingsPage() {
         const { data: rs } = await supabase
           .from('reminder_settings')
           .select('daily_reminder, streak_alerts, weekly_summary')
-          .eq('id', user.id)
+          .eq('user_id', user.id)
           .maybeSingle();
 
         if (rs) {
@@ -84,12 +85,20 @@ export default function SettingsPage() {
   const saveProfile = async () => {
     if (!userId) return;
     setSavingProfile(true);
+    setSaveMessage(null);
     try {
       const { error } = await supabase
         .from('profiles')
         .update({ display_name: displayName })
         .eq('id', userId);
-      if (error) throw error;
+      if (error) {
+        setSaveMessage({ type: 'error', text: 'Failed to save: ' + error.message });
+        throw error;
+      }
+      setSaveMessage({ type: 'success', text: 'Profile saved successfully!' });
+      setTimeout(() => setSaveMessage(null), 3000);
+    } catch (e) {
+      console.error('Save profile failed:', e);
     } finally {
       setSavingProfile(false);
     }
@@ -99,15 +108,15 @@ export default function SettingsPage() {
     if (!userId) return;
     setSavingPrefs(true);
     try {
-      // Upsert by user id as primary key in your schema (adjust if different)
+      // Upsert by user_id as primary key in your schema
       const { error } = await supabase.from('reminder_settings').upsert(
         {
-          id: userId,
+          user_id: userId,
           daily_reminder: prefs.dailyReminder,
           streak_alerts: prefs.streakAlerts,
           weekly_summary: prefs.weeklySummary,
         },
-        { onConflict: 'id' }
+        { onConflict: 'user_id' }
       );
       if (error) throw error;
     } finally {
@@ -197,6 +206,26 @@ export default function SettingsPage() {
             Manage your profile and preferences
           </p>
         </div>
+
+        {/* Success/Error Message */}
+        {saveMessage && (
+          <div style={{
+            padding: '14px 16px',
+            borderRadius: '16px',
+            background: saveMessage.type === 'success' ? '#dcfce7' : '#fee2e2',
+            border: `1px solid ${saveMessage.type === 'success' ? '#86efac' : '#fecaca'}`,
+            color: saveMessage.type === 'success' ? '#15803d' : '#dc2626',
+            fontSize: '14px',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            animation: 'slideDown 0.3s ease-out'
+          }}>
+            <span>{saveMessage.type === 'success' ? '✓' : '✕'}</span>
+            {saveMessage.text}
+          </div>
+        )}
 
         {/* Profile Card */}
         <div style={{
@@ -839,6 +868,19 @@ export default function SettingsPage() {
           <span>Settings</span>
         </button>
       </nav>
+
+      <style jsx>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
