@@ -9,7 +9,9 @@ import {
   Activity, 
   Target, 
   Sparkles, 
-  TrendingUp 
+  TrendingUp,
+  TreePine,
+  Loader2
 } from 'lucide-react';
 
 const INTEREST_CATEGORIES = [
@@ -182,32 +184,98 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#64748B' }}>Loading...</div>
+      <div style={{ 
+        minHeight: '100vh', 
+        background: 'linear-gradient(to bottom, #f0fdf4, #ffffff)',
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        padding: '20px'
+      }}>
+        <div style={{
+          background: '#ffffff',
+          border: '1px solid #bbf7d0',
+          borderRadius: '24px',
+          padding: '32px',
+          boxShadow: '0 10px 40px rgba(34, 197, 94, 0.1)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <Loader2 size={32} style={{ color: '#16a34a' }} className="animate-spin" />
+          <span style={{ color: '#16a34a', fontWeight: '500', fontSize: '14px' }}>Loading...</span>
+        </div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-        <div style={{ width: 360, border: '1px solid #e2e8f0', borderRadius: 12, padding: 16, background: '#fff', textAlign: 'center' }}>
-          <h2 style={{ marginBottom: 12, fontSize: 20, color: '#1E293B' }}>Check your email</h2>
-          <p style={{ fontSize: 14, color: '#64748B', marginBottom: 16 }}>
+      <div style={{ 
+        minHeight: '100vh', 
+        background: 'linear-gradient(to bottom, #f0fdf4, #ffffff)',
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        padding: '20px' 
+      }}>
+        <div style={{ 
+          width: '420px',
+          maxWidth: '100%',
+          background: '#ffffff',
+          border: '1px solid #e2e8f0',
+          borderRadius: '24px',
+          padding: '32px',
+          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.04)',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            width: '72px',
+            height: '72px',
+            background: '#dcfce7',
+            borderRadius: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px'
+          }}>
+            <TreePine size={40} style={{ color: '#16a34a' }} strokeWidth={2} />
+          </div>
+          <h2 style={{ 
+            marginBottom: '12px', 
+            fontSize: '24px', 
+            color: '#0f172a',
+            fontWeight: '700',
+            letterSpacing: '-0.02em'
+          }}>
+            Check your email
+          </h2>
+          <p style={{ 
+            fontSize: '15px', 
+            color: '#64748b', 
+            marginBottom: '24px',
+            lineHeight: '1.6'
+          }}>
             Please confirm your account, then log in to continue.
           </p>
           <button
             onClick={() => router.push('/login')}
             style={{ 
-              display: 'inline-block', 
-              padding: '10px 20px', 
-              borderRadius: 8, 
-              background: '#6366F1', 
-              color: '#fff', 
+              width: '100%',
+              padding: '14px 20px', 
+              borderRadius: '16px', 
+              background: '#16a34a', 
+              color: '#ffffff', 
               border: 'none', 
               cursor: 'pointer',
-              fontWeight: '500',
+              fontWeight: '700',
+              fontSize: '15px',
+              boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)',
+              transition: 'all 0.2s'
             }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
           >
             Back to login
           </button>
@@ -219,63 +287,105 @@ export default function OnboardingPage() {
   return (
     <div style={{ 
       minHeight: '100vh', 
+      background: 'linear-gradient(to bottom, #f0fdf4, #ffffff)',
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      padding: 20,
-      background: '#F8FAFC',
+      padding: '20px',
     }}>
       <div style={{ 
-        width: 720, 
+        width: '740px', 
         maxWidth: '100%', 
-        border: '1px solid #e2e8f0', 
-        borderRadius: 12, 
-        padding: 32, 
-        background: '#fff',
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: '24px',
+        padding: '40px 32px',
+        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.04)',
       }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <h1 style={{ fontSize: 28, marginBottom: 8, color: '#1E293B', fontWeight: '600' }}>
-            What are you interested in?
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            background: 'linear-gradient(135deg, #bbf7d0 0%, #86efac 100%)',
+            borderRadius: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px',
+            boxShadow: '0 8px 24px rgba(34, 197, 94, 0.2)'
+          }}>
+            <TreePine size={32} style={{ color: '#15803d' }} strokeWidth={2.5} />
+          </div>
+          <h1 style={{ 
+            fontSize: '32px', 
+            marginBottom: '12px', 
+            color: '#0f172a', 
+            fontWeight: '800',
+            letterSpacing: '-0.02em'
+          }}>
+            What interests you?
           </h1>
-          <p style={{ fontSize: 15, color: '#64748B' }}>
-            We'll send you helpful reminders based on your interests
+          <p style={{ 
+            fontSize: '16px', 
+            color: '#64748b',
+            lineHeight: '1.6',
+            maxWidth: '480px',
+            margin: '0 auto'
+          }}>
+            Select topics you care about. We'll send helpful reminders based on your interests.
           </p>
         </div>
 
         {error && (
           <div style={{ 
-            color: '#b91c1c', 
-            fontSize: 14, 
-            marginBottom: 20, 
+            color: '#dc2626', 
+            fontSize: '14px', 
+            marginBottom: '24px', 
             textAlign: 'center',
-            padding: '10px',
-            background: '#FEE2E2',
-            borderRadius: 8,
+            padding: '14px',
+            background: '#fee2e2',
+            borderRadius: '16px',
+            fontWeight: '500'
           }}>
             {error}
           </div>
         )}
 
-        <div style={{ marginBottom: 24 }}>
+        {/* Interest Categories */}
+        <div style={{ marginBottom: '32px' }}>
           {INTEREST_CATEGORIES.map((category) => {
             const IconComponent = category.icon;
             return (
-              <div key={category.title} style={{ marginBottom: 28 }}>
+              <div key={category.title} style={{ marginBottom: '32px' }}>
                 <div style={{ 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: 8, 
-                  marginBottom: 12,
+                  gap: '10px', 
+                  marginBottom: '16px',
                 }}>
-                  <IconComponent 
-                    size={18} 
-                    style={{ color: '#6366F1' }} 
-                  />
+                  <div style={{
+                    width: '36px',
+                    height: '36px',
+                    background: '#dcfce7',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <IconComponent 
+                      size={18} 
+                      style={{ color: '#16a34a' }} 
+                      strokeWidth={2}
+                    />
+                  </div>
                   <h3 style={{ 
-                    fontSize: 16, 
-                    fontWeight: '600', 
-                    color: '#334155',
+                    fontSize: '17px', 
+                    fontWeight: '700', 
+                    color: '#0f172a',
                     margin: 0,
+                    letterSpacing: '-0.01em'
                   }}>
                     {category.title}
                   </h3>
@@ -283,8 +393,8 @@ export default function OnboardingPage() {
                 <div style={{ 
                   display: 'flex', 
                   flexWrap: 'wrap', 
-                  gap: 8,
-                  paddingLeft: 26,
+                  gap: '10px',
+                  paddingLeft: '46px',
                 }}>
                   {category.interests.map(tag => {
                     const isSelected = selected.has(tag);
@@ -294,15 +404,27 @@ export default function OnboardingPage() {
                         type="button"
                         onClick={() => toggleInterest(tag)}
                         style={{
-                          padding: '8px 16px',
-                          borderRadius: 20,
-                          border: isSelected ? '2px solid #6366F1' : '1px solid #E2E8F0',
-                          background: isSelected ? '#EEF2FF' : '#FFFFFF',
-                          color: isSelected ? '#4F46E5' : '#64748B',
-                          fontWeight: isSelected ? '500' : '400',
+                          padding: '10px 18px',
+                          borderRadius: '16px',
+                          border: isSelected ? '2px solid #16a34a' : '1px solid #e2e8f0',
+                          background: isSelected ? '#dcfce7' : '#ffffff',
+                          color: isSelected ? '#15803d' : '#64748b',
+                          fontWeight: isSelected ? '600' : '500',
                           cursor: 'pointer',
-                          fontSize: 14,
+                          fontSize: '14px',
                           transition: 'all 0.2s',
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isSelected) {
+                            e.currentTarget.style.background = '#f8fafc';
+                            e.currentTarget.style.borderColor = '#cbd5e1';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isSelected) {
+                            e.currentTarget.style.background = '#ffffff';
+                            e.currentTarget.style.borderColor = '#e2e8f0';
+                          }
                         }}
                       >
                         {tag}
@@ -315,17 +437,19 @@ export default function OnboardingPage() {
           })}
         </div>
 
+        {/* Footer */}
         <div style={{ 
-          borderTop: '1px solid #E2E8F0', 
-          paddingTop: 20,
+          borderTop: '1px solid #e2e8f0', 
+          paddingTop: '24px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 12,
+          gap: '16px',
         }}>
           <div style={{ 
             textAlign: 'center', 
-            fontSize: 13, 
-            color: '#64748B',
+            fontSize: '14px', 
+            color: '#64748b',
+            fontWeight: '600'
           }}>
             {selected.size} interest{selected.size !== 1 ? 's' : ''} selected
           </div>
@@ -335,24 +459,38 @@ export default function OnboardingPage() {
             disabled={saving}
             style={{
               width: '100%',
-              padding: '14px',
-              borderRadius: 8,
-              background: '#6366F1',
-              color: '#fff',
+              padding: '16px',
+              borderRadius: '16px',
+              background: '#16a34a',
+              color: '#ffffff',
               border: 'none',
               cursor: saving ? 'not-allowed' : 'pointer',
               opacity: saving ? 0.6 : 1,
-              fontWeight: '600',
-              fontSize: 15,
+              fontWeight: '700',
+              fontSize: '16px',
+              boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)',
+              transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
+            onMouseEnter={(e) => {
+              if (!saving) e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              if (!saving) e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
-            {saving ? 'Saving...' : 'Finish onboarding'}
+            {saving && <Loader2 size={18} className="animate-spin" />}
+            {saving ? 'Saving...' : 'Continue to CalmScroll'}
           </button>
           <p style={{ 
             textAlign: 'center', 
-            fontSize: 12, 
-            color: '#94A3B8', 
+            fontSize: '13px', 
+            color: '#94a3b8', 
             margin: 0,
+            fontWeight: '500'
           }}>
             You can change these later in settings
           </p>
