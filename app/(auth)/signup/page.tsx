@@ -3,39 +3,123 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { TreePine, Mail, Lock, Loader2 } from 'lucide-react';
+import { TreePine, Mail, Lock, Loader2, CheckCircle } from 'lucide-react';
 import { SparklesCore } from '@/components/ui/sparkles';
 
 export default function SignupPage() {
   const router = useRouter();
-  const { signup, signInWithGoogle, signInWithMicrosoft } = useAuth();
+  const { signup, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string|null>(null);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null); setIsLoading(true);
+    setError(null); 
+    setSuccess(false);
+    setIsLoading(true);
     try { 
       await signup(email, password);
-      router.replace('/onboarding');
+      setSuccess(true);
+      // Don't redirect - user needs to confirm email first
     }
-    catch (err:any) { setError(err?.message || 'Signup failed.'); }
-    finally { setIsLoading(false); }
+    catch (err:any) { 
+      setError(err?.message || 'Signup failed.'); 
+    }
+    finally { 
+      setIsLoading(false); 
+    }
   };
 
   const handleGoogle = async () => { 
-    setError(null); setIsLoading(true);
-    try { await signInWithGoogle(); } 
-    catch (e:any){ setError(e?.message || 'Google failed'); setIsLoading(false); } 
+    setError(null); 
+    setIsLoading(true);
+    try { 
+      await signInWithGoogle(); 
+      // OAuth redirects automatically
+    } 
+    catch (e:any){ 
+      setError(e?.message || 'Google failed'); 
+      setIsLoading(false); 
+    } 
   };
-  
-  const handleOutlook = async () => { 
-    setError(null); setIsLoading(true);
-    try { await signInWithMicrosoft(); } 
-    catch (e:any){ setError(e?.message || 'Outlook failed'); setIsLoading(false); } 
-  };
+
+  // If signup successful, show confirmation message
+  if (success) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #f0fdf4, #ffffff)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+      }}>
+        <div style={{
+          width: '420px',
+          maxWidth: '100%',
+          background: '#ffffff',
+          border: '1px solid #e2e8f0',
+          borderRadius: '24px',
+          padding: '40px 32px',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.08)',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            background: '#dcfce7',
+            borderRadius: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px',
+          }}>
+            <CheckCircle size={32} style={{ color: '#16a34a' }} strokeWidth={2.5} />
+          </div>
+          <h2 style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            color: '#0f172a',
+            margin: '0 0 12px 0',
+            letterSpacing: '-0.02em'
+          }}>
+            Check your email
+          </h2>
+          <p style={{
+            fontSize: '15px',
+            color: '#64748b',
+            margin: '0 0 24px 0',
+            lineHeight: '1.6'
+          }}>
+            We sent a confirmation link to <strong>{email}</strong>. Click the link to verify your account.
+          </p>
+          <button
+            onClick={() => router.push('/login')}
+            style={{
+              width: '100%',
+              padding: '16px',
+              borderRadius: '16px',
+              background: '#16a34a',
+              color: '#ffffff',
+              border: 'none',
+              fontSize: '16px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{
@@ -273,73 +357,40 @@ export default function SignupPage() {
           <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
         </div>
 
-        {/* OAuth Buttons */}
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-          <button 
-            type="button" 
-            onClick={handleGoogle} 
-            disabled={isLoading} 
-            style={{
-              flex: 1,
-              padding: '14px',
-              border: '1px solid #e2e8f0',
-              borderRadius: '14px',
-              background: '#ffffff',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#475569',
-              cursor: isLoading ? 'not-allowed' : 'pointer',
-              opacity: isLoading ? 0.6 : 1,
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              if (!isLoading) {
-                e.currentTarget.style.background = '#f8fafc';
-                e.currentTarget.style.borderColor = '#cbd5e1';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isLoading) {
-                e.currentTarget.style.background = '#ffffff';
-                e.currentTarget.style.borderColor = '#e2e8f0';
-              }
-            }}
-          >
-            Google
-          </button>
-          <button 
-            type="button" 
-            onClick={handleOutlook} 
-            disabled={isLoading} 
-            style={{
-              flex: 1,
-              padding: '14px',
-              border: '1px solid #e2e8f0',
-              borderRadius: '14px',
-              background: '#ffffff',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#475569',
-              cursor: isLoading ? 'not-allowed' : 'pointer',
-              opacity: isLoading ? 0.6 : 1,
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              if (!isLoading) {
-                e.currentTarget.style.background = '#f8fafc';
-                e.currentTarget.style.borderColor = '#cbd5e1';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isLoading) {
-                e.currentTarget.style.background = '#ffffff';
-                e.currentTarget.style.borderColor = '#e2e8f0';
-              }
-            }}
-          >
-            Outlook
-          </button>
-        </div>
+        {/* Google Button */}
+        <button 
+          type="button" 
+          onClick={handleGoogle} 
+          disabled={isLoading} 
+          style={{
+            width: '100%',
+            padding: '14px',
+            border: '1px solid #e2e8f0',
+            borderRadius: '14px',
+            background: '#ffffff',
+            fontSize: '14px',
+            fontWeight: '600',
+            color: '#475569',
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            opacity: isLoading ? 0.6 : 1,
+            transition: 'all 0.2s',
+            marginBottom: '24px'
+          }}
+          onMouseEnter={(e) => {
+            if (!isLoading) {
+              e.currentTarget.style.background = '#f8fafc';
+              e.currentTarget.style.borderColor = '#cbd5e1';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isLoading) {
+              e.currentTarget.style.background = '#ffffff';
+              e.currentTarget.style.borderColor = '#e2e8f0';
+            }
+          }}
+        >
+          Continue with Google
+        </button>
 
         {/* Login Link */}
         <p style={{

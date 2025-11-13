@@ -8,7 +8,7 @@ import { SparklesCore } from '@/components/ui/sparkles';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, signInWithGoogle, signInWithMicrosoft } = useAuth();
+  const { login, signInWithGoogle } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,11 +30,6 @@ export default function LoginPage() {
   const handleGoogle = async () => {
     setError(null); setIsLoading(true);
     try { await signInWithGoogle(); } catch (e:any) { setError(e?.message || 'Google sign-in failed'); setIsLoading(false); }
-  };
-  
-  const handleOutlook = async () => {
-    setError(null); setIsLoading(true);
-    try { await signInWithMicrosoft(); } catch (e:any) { setError(e?.message || 'Outlook sign-in failed'); setIsLoading(false); }
   };
 
   return (
@@ -280,72 +275,39 @@ export default function LoginPage() {
             <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
           </div>
 
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-            <button 
-              type="button" 
-              onClick={handleGoogle} 
-              disabled={isLoading} 
-              style={{
-                flex: 1,
-                padding: '14px',
-                border: '1px solid #e2e8f0',
-                borderRadius: '14px',
-                background: '#ffffff',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#475569',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                opacity: isLoading ? 0.6 : 1,
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.background = '#f8fafc';
-                  e.currentTarget.style.borderColor = '#cbd5e1';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.background = '#ffffff';
-                  e.currentTarget.style.borderColor = '#e2e8f0';
-                }
-              }}
-            >
-              Google
-            </button>
-            <button 
-              type="button" 
-              onClick={handleOutlook} 
-              disabled={isLoading} 
-              style={{
-                flex: 1,
-                padding: '14px',
-                border: '1px solid #e2e8f0',
-                borderRadius: '14px',
-                background: '#ffffff',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#475569',
-                cursor: isLoading ? 'not-allowed' : 'pointer',
-                opacity: isLoading ? 0.6 : 1,
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.background = '#f8fafc';
-                  e.currentTarget.style.borderColor = '#cbd5e1';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isLoading) {
-                  e.currentTarget.style.background = '#ffffff';
-                  e.currentTarget.style.borderColor = '#e2e8f0';
-                }
-              }}
-            >
-              Outlook
-            </button>
-          </div>
+          <button 
+            type="button" 
+            onClick={handleGoogle} 
+            disabled={isLoading} 
+            style={{
+              width: '100%',
+              padding: '14px',
+              border: '1px solid #e2e8f0',
+              borderRadius: '14px',
+              background: '#ffffff',
+              fontSize: '14px',
+              fontWeight: '600',
+              color: '#475569',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              opacity: isLoading ? 0.6 : 1,
+              transition: 'all 0.2s',
+              marginBottom: '24px'
+            }}
+            onMouseEnter={(e) => {
+              if (!isLoading) {
+                e.currentTarget.style.background = '#f8fafc';
+                e.currentTarget.style.borderColor = '#cbd5e1';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isLoading) {
+                e.currentTarget.style.background = '#ffffff';
+                e.currentTarget.style.borderColor = '#e2e8f0';
+              }
+            }}
+          >
+            Continue with Google
+          </button>
 
           <p style={{
             textAlign: 'center',

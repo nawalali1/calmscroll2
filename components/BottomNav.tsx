@@ -17,24 +17,27 @@ export default function BottomNav() {
 
   return (
     <nav style={{
-      position: 'sticky',
+      position: 'fixed',
       bottom: 0,
+      left: 0,
+      right: 0,
+      maxWidth: '420px',
+      margin: '0 auto',
       background: 'rgba(255, 255, 255, 0.95)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
       borderTop: '1px solid rgba(226, 232, 240, 0.8)',
-      borderRadius: '24px 24px 0 0',
+      borderRadius: '0 0 40px 40px', // ← MATCHES PHONE FRAME
       boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.08)',
       paddingBottom: 'max(1rem, env(safe-area-inset-bottom))',
-      zIndex: 50
+      zIndex: 50,
+      overflow: 'hidden' // ← ENSURES CONTENT STAYS WITHIN ROUNDED CORNERS
     }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-around',
         padding: '12px 16px 8px',
-        maxWidth: '420px',
-        margin: '0 auto'
       }}>
         {navItems.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useBreather } from '@/hooks/useBreather';
 import BreatherSheet from '@/components/BreatherSheet';
+import BottomNav from '@/components/BottomNav';
 
 interface Profile {
   display_name?: string;
@@ -669,78 +670,10 @@ export default function HomePage() {
         </section>
       </div>
 
-      {/* Bottom Nav */}
-      <nav style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        borderTop: '1px solid #e2e8f0',
-        boxShadow: '0 -2px 16px rgba(0, 0, 0, 0.04)',
-        display: 'flex',
-        justifyContent: 'space-around',
-        padding: '12px 0 16px 0',
-        maxWidth: '420px',
-        margin: '0 auto'
-      }}>
-        <button style={{
-          background: 'none',
-          border: 'none',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '6px',
-          cursor: 'pointer',
-          color: '#16a34a',
-          fontSize: '12px',
-          fontWeight: '600',
-          padding: '8px 20px'
-        }}>
-          <Home size={24} strokeWidth={2.5} />
-          <span>Home</span>
-        </button>
-        <button 
-          onClick={() => router.push('/calendar')}
-          style={{
-            background: 'none',
-            border: 'none',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '6px',
-            cursor: 'pointer',
-            color: '#94a3b8',
-            fontSize: '12px',
-            fontWeight: '500',
-            padding: '8px 20px'
-          }}
-        >
-          <Calendar size={24} strokeWidth={2} />
-          <span>Calendar</span>
-        </button>
-        <button 
-          onClick={() => router.push('/settings')}
-          style={{
-            background: 'none',
-            border: 'none',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '6px',
-            cursor: 'pointer',
-            color: '#94a3b8',
-            fontSize: '12px',
-            fontWeight: '500',
-            padding: '8px 20px'
-          }}
-        >
-          <Settings size={24} strokeWidth={2} />
-          <span>Settings</span>
-        </button>
-      </nav>
+         {/* Bottom Nav */}
+      <BottomNav />
+
+  
 
       {/* Add Note Sheet */}
       {showAddNote && (

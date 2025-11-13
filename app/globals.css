@@ -32,7 +32,7 @@ html,
 body {
   width: 100%;
   height: 100%;
-  background-color: var(--bg-mist-50);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   color: var(--ink-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter',
     sans-serif;
@@ -52,12 +52,13 @@ body {
 /* Mobile-safe container */
 .mobile-container {
   width: 100%;
-  max-width: 402px;
+  max-width: 420px;
   margin: 0 auto;
   background-color: var(--surface-default);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
 }
 
 /* Safe area padding */
@@ -286,15 +287,87 @@ textarea:focus {
   display: none;
 }
 
-/* Responsive: Mobile only */
-@media (min-width: 403px) {
+/* ==========================================
+   📱 PHONE FRAME (Desktop Only)
+   ========================================== */
+
+@media (min-width: 430px) {
   body {
-    background: linear-gradient(135deg, var(--bg-mist-50) 0%, var(--surface-subtle) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   }
 
   .mobile-container {
-    border-radius: 24px;
-    margin: 16px auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    height: 844px;
+    max-height: 90vh;
+    margin: 0 auto;
+    background-color: var(--surface-default);
+    border-radius: 40px;
+    box-shadow: 
+      0 0 0 12px #1a1a1a,
+      0 0 0 14px #404040,
+      0 30px 80px rgba(0, 0, 0, 0.6),
+      0 10px 40px rgba(0, 0, 0, 0.4);
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* iPhone Notch */
+  .mobile-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 30px;
+    background: #1a1a1a;
+    border-radius: 0 0 20px 20px;
+    z-index: 9999;
+  }
+
+  /* Home Indicator Bar */
+  .mobile-container::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    z-index: 9999;
+  }
+}
+
+/* ==========================================
+   📱 MOBILE (Full Screen - No Frame)
+   ========================================== */
+
+@media (max-width: 429px) {
+  body {
+    background-color: var(--surface-default);
+  }
+
+  .mobile-container {
+    border-radius: 0;
+    margin: 0;
+    box-shadow: none;
+    min-height: 100vh;
+  }
+
+  /* Remove notch and home indicator on mobile */
+  .mobile-container::before,
+  .mobile-container::after {
+    display: none;
   }
 }

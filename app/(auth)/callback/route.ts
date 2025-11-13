@@ -2,14 +2,25 @@ import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-  const supabase = await createClient();
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get('code');
 
-  // SSR client exchanges ?code= for session via cookies
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.redirect(new URL('/login?error=oauth_failed', request.url));
+  if (code) {
+    const supabase = await createClient();
+    
+    // Exchange the code for a session
+    await supabase.auth.exchangeCodeForSession(code);
   }
 
+  // After exchanging code, check user and redirect
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    return NextResponse.redirect(new URL('/login?error=oauth_failed', requestUrl.origin));
+  }
+
+  // Check if profile exists and if onboarding is complete
   const { data: profile } = await supabase
     .from('profiles')
     .select('onboarding_complete')
@@ -17,8 +28,8 @@ export async function GET(request: Request) {
     .maybeSingle();
 
   if (!profile || profile.onboarding_complete !== true) {
-    return NextResponse.redirect(new URL('/onboarding', request.url));
+    return NextResponse.redirect(new URL('/onboarding', requestUrl.origin));
   }
 
-  return NextResponse.redirect(new URL('/home', request.url));
+  return NextResponse.redirect(new URL('/home', requestUrl.origin));
 }
